@@ -1,6 +1,7 @@
 import React from "react";
 import { TOKEN_POST, TOKEN_VALIDATE_POST, USER_GET } from "./api";
 import { useNavigate } from "react-router-dom";
+
 export const UserContext = React.createContext();
 
 export const UserStorage = ({ children }) => {
@@ -15,7 +16,7 @@ export const UserStorage = ({ children }) => {
       setData(null);
       setError(null);
       setLoading(false);
-      setLoading(false);
+      setLogin(false);
       window.localStorage.removeItem("token");
       navigate("/login");
     },
@@ -28,7 +29,6 @@ export const UserStorage = ({ children }) => {
     const json = await response.json();
     setData(json);
     setLogin(true);
-    console.log(login);
   }
 
   async function userLogin(username, password) {
@@ -37,7 +37,7 @@ export const UserStorage = ({ children }) => {
       setLoading(true);
       const { url, options } = TOKEN_POST({ username, password });
       const tokenRes = await fetch(url, options);
-      if (!tokenRes.ok) throw new Error(`Error: usuário ou senha inválidos`);
+      if (!tokenRes.ok) throw new Error(`Error: ${tokenRes.statusText}`);
       const { token } = await tokenRes.json();
       window.localStorage.setItem("token", token);
       await getUser(token);
@@ -61,12 +61,13 @@ export const UserStorage = ({ children }) => {
           const response = await fetch(url, options);
           if (!response.ok) throw new Error("Token inválido");
           await getUser(token);
-          navigate("/conta");
         } catch (err) {
           userLogout();
         } finally {
           setLoading(false);
         }
+      } else {
+        setLogin(false);
       }
     }
     autoLogin();
