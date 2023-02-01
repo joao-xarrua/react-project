@@ -45,6 +45,7 @@ export function USER_POST(body) {
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify(body),
     },
   };
@@ -79,6 +80,20 @@ export function PHOTO_GET(id) {
     options: {
       method: "GET",
       cache: "no-store",
+    },
+  };
+}
+
+export function COMMENT_POST(id, body) {
+  return {
+    url: `${API_URL}/api/comment/${id}`,
+    options: {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + window.localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
     },
   };
 }
